@@ -17,14 +17,19 @@ v = v0
 
 # 时间参数
 dt = 0.01  # 时间步长，单位：s
-t_max = 10  # 总时间，单位：s
+t_max = 5  # 总时间，单位：s
 t_values = np.arange(0, t_max, dt)
 x_values = []  # 用于存储小球位置的数组
+v_values = []  # velocity
+a_values = []  # acceleration
 
 # 初始化图形和子图
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 6))
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6, 6))
 ax1.set_xlim(-1, 1)
 ax1.set_ylim(-1.5, 1.5)
+ax1.set_xlabel('X')
+ax1.set_ylabel('Y')
+ax1.set_title('Spring-mass')
 line, = ax1.plot([], [], 'bo')  # 小球
 spring, = ax1.plot([], [], 'r-')  # 弹簧
 
@@ -32,8 +37,15 @@ spring, = ax1.plot([], [], 'r-')  # 弹簧
 ax2.set_xlim(0, t_max)
 ax2.set_ylim(-1.5, 1.5)
 ax2.set_xlabel('Time (s)')
-ax2.set_ylabel('Position (m)')
+ax2.set_ylabel('Y Position')
 x_line, = ax2.plot([], [], 'b-')
+# x_line.set_label('x')
+# v_line, = ax2.plot([], [], 'g--')
+# v_line.set_label('v')
+# a_line, = ax2.plot([], [], 'r-.')
+# a_line.set_label('a')
+# ax2.legend()
+ax2.grid(True)
 
 # 初始化动画
 def init():
@@ -50,6 +62,8 @@ def animate(i):
     v = v + a*dt
     x = x + v*dt
     x_values.append(x)  # 记录小球位置
+    v_values.append(v/omega_0)
+    a_values.append(a/omega_0**2)
     
     # 更新小球的位置
     line.set_data([0], [x])
@@ -59,15 +73,18 @@ def animate(i):
     
     # 更新第二个子图
     x_line.set_data(t_values[:i+1], x_values)
+    # v_line.set_data(t_values[:i+1], v_values)
+    # a_line.set_data(t_values[:i+1], a_values)
     ax2.set_ylim(-1.5, 1.5)
     
+    # return line, spring, x_line, v_line, a_line
     return line, spring, x_line
 
 # 创建动画
 ani = FuncAnimation(fig, animate, init_func=init, frames=len(t_values), interval=dt*1000, blit=True)
 
 # 存储动画
-ani.save('./overdamped_harmonic_oscillation.mp4', writer='ffmpeg', fps=60)
+ani.save('./harmonic_oscillation/overdamped_harmonic_oscillation.mp4', writer='ffmpeg', fps=120)
 
 # 显示动画
 plt.show()
